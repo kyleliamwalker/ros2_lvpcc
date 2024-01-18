@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-from imu_ros2_driver.utils import quaternion_to_euler
 import rclpy
 from rclpy.node import Node
 from labjack import ljm

@@ -1,8 +1,117 @@
 #!/usr/bin/env python
 
-from imu_ros2_driver.kinematics import rotation_matrix_x, rotation_matrix_y, rotation_matrix_z
 import numpy as np
-from imu_ros2_driver.utils import fix_phi_angle
+from geometry_msgs.msg import Quaternion
+
+def rotation_matrix_x(angle):
+    """
+    Rotation matrix around the x axis.
+
+    Parameters
+    ----------
+    angle: float
+        Rotation
+    Returns
+    -------
+    np.array
+        Rotation matrix
+
+    """
+    return np.array([[1, 0, 0],
+                     [0, np.cos(angle), -np.sin(angle)],
+                     [0, np.sin(angle), np.cos(angle)]])
+
+
+def rotation_matrix_y(angle):
+    """
+    Rotation matrix around the y axis.
+
+    Parameters
+    ----------
+    angle: float
+        Rotation angle in radians
+
+    Returns
+    -------
+    np.array
+        Rotation matrix
+
+    """
+    return np.array([[np.cos(angle), 0, np.sin(angle)],
+                     [0, 1, 0],
+                     [-np.sin(angle), 0, np.cos(angle)]])
+
+
+def rotation_matrix_z(angle):
+    """
+    Rotation matrix around the z axis.
+
+    Parameters
+    ----------
+    angle: float
+        Rotation angle in radians
+
+    Returns
+    -------
+    np.array
+        Rotation matrix
+
+    """
+    return np.array([[np.cos(angle), -np.sin(angle), 0],
+                     [np.sin(angle), np.cos(angle), 0],
+                     [0, 0, 1]])
+
+def quaternion_to_euler(
+    quaternion: Quaternion,
+    radians: bool = True
+) -> np.array:
+    """
+    Convert quaternion to degrees.
+
+    Parameters
+    ----------
+    quaternion: Quaternion
+        ROS Quaternion Msg to be converted
+    radians: bool
+        If True, the output will be in radians. If False, the output will be
+        in degrees.
+
+    Returns
+    -------
+    np.array
+        Quaternion converted to degrees.
+
+    """
+    quaternion = np.array([quaternion.x,
+                           quaternion.y,
+                           quaternion.z,
+                           quaternion.w])
+
+    x = quaternion[0]
+    y = quaternion[1]
+    z = quaternion[2]
+    w = quaternion[3]
+
+    ori_angles = []
+
+    t0 = +2.0 * (w * x + y * z)
+    t1 = +1.0 - 2.0 * (x * x + y * y)
+    ori_angles.append(np.arctan2(t0, t1))  # roll_x
+
+    t2 = +2.0 * (w * y - z * x)
+    t2 = +1.0 if t2 > +1.0 else t2
+    t2 = -1.0 if t2 < -1.0 else t2
+    ori_angles.append(np.arcsin(t2))  # pitch_y
+
+    t3 = +2.0 * (w * z + x * y)
+    t4 = +1.0 - 2.0 * (y * y + z * z)
+    ori_angles.append(np.arctan2(t3, t4))  # yaw_z
+
+    ori_angles = np.array(ori_angles)
+    if not radians:
+        ori_angles = np.degrees(ori_angles)
+
+    return ori_angles
 
 def generate_phi_theta(self):
 
@@ -90,3 +199,26 @@ def generate_phi_theta(self):
             np.array([phi, theta]).reshape(-1, 1)
 
     return state
+
+def fix_phi_angle(phi):
+    """
+    Fix the phi angle.
+
+    The phi angle must be between -pi/2 and pi/2.
+
+    Parameters
+    ----------
+    phi : float
+        Angle in radians.
+
+    Returns
+    -------
+    float
+        Angle in radians.
+
+    """
+    if phi > np.pi/2:
+        phi = phi - np.pi
+    elif phi < -np.pi/2:
+        phi = phi + np.pi
+    return phi
