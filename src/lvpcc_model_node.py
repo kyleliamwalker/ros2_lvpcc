@@ -37,7 +37,7 @@ class LVPCC( Node ):
         P1 = self.P1
         P2 = self.P2
         L = self.L_t
-        q = self.theta
+        q = 0.1
         # offset of sensors from centre line
         r = 0
 
@@ -69,8 +69,8 @@ class LVPCC( Node ):
     # update length readings
     def update_length(self, data):
 
-        enc_state = data.data
-        self.L = (enc_state/1.98)/4 + self.L_init
+        enc_state = list(data.data)
+        self.L = [(x/1.98)/4 + self.L_init for x in enc_state]
 
         self.get_logger().info("Length: %s" % self.L)
 

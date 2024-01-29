@@ -36,7 +36,7 @@ class LabJack( Node ):
         # DIO0_EF_READ_A_F displays counts both positive and negative
         # DIO0_EF_READ_A displays counts positive and negative as two's complement
         data = ljm.eReadNames(self.lj_handle, 2, ["DIO0_EF_READ_A_F", "DIO2_EF_READ_A_F"])
-        self.get_logger().info("Output : %f, %f" % (data[0], data[1]))
+        # self.get_logger().info("Output : %f, %f" % (data[0], data[1]))
 
         # pub msg
         encoder_msg = Float32MultiArray()

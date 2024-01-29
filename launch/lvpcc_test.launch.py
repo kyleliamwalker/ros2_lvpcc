@@ -12,12 +12,12 @@ def generate_launch_description():
             name='encoder',
             output="screen",
         ),
-        # Node(
-        #     package='ros2_lvpcc',
-        #     executable='lvpcc_model_node.py',
-        #     name='lvpcc',
-        #     output="screen",
-        # ),
+        Node(
+            package='ros2_lvpcc',
+            executable='lvpcc_model_node.py',
+            name='lvpcc',
+            output="screen",
+        ),
         # Node(
         #     package="rviz2",
         #     executable="rviz2",
