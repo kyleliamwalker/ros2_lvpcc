@@ -2,6 +2,29 @@
 
 import numpy as np
 from geometry_msgs.msg import Quaternion
+import math
+
+def pcc_kinematics( L, theta, s ):
+
+    return L*np.array([math.sin(s*theta)/theta, (1-math.cos(s*theta))/theta])
+
+def rotation_matrix_y_2d(angle):
+    """
+    Rotation matrix around the y axis.
+
+    Parameters
+    ----------
+    angle: float
+        Rotation angle in radians
+
+    Returns
+    -------
+    np.array
+        Rotation matrix
+
+    """
+    return np.array([[np.cos(angle), np.sin(angle)],
+                     [-np.sin(angle), np.cos(angle)]])
 
 def rotation_matrix_x(angle):
     """
